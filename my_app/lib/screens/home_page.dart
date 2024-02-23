@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/screens/select_season_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,42 +13,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('My App'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'You have pushed the button',
-              style: TextStyle(fontSize: 25),
-            ),
-            Text(
-              '$counter',
-              style: const TextStyle(fontSize: 30),
-            ),
-            Container(
-              margin: const EdgeInsets.all(10),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/login');
-                },
-                child: const Text('Increment'),
-              ),
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //   Navigator.of(context).push(
-          //       MaterialPageRoute(builder: (context) => const SecondScreen()));
-          Navigator.of(context).pushNamed('/second');
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
+    return SeasonScreen();
   }
 }
