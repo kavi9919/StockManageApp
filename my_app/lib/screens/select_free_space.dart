@@ -8,21 +8,32 @@ class Seat {
   Seat(this.row, this.column, {this.isAvailable = true});
 }
 
-class MovieTheaterPage extends StatefulWidget {
+class FreeSpacePage extends StatefulWidget {
+  const FreeSpacePage({super.key});
+
   @override
-  _MovieTheaterPageState createState() => _MovieTheaterPageState();
+  // ignore: library_private_types_in_public_api
+  _FreeSpacePageState createState() => _FreeSpacePageState();
 }
 
-class _MovieTheaterPageState extends State<MovieTheaterPage> {
+class _FreeSpacePageState extends State<FreeSpacePage> {
   int rows = 0;
   int columns = 0;
   List<List<Seat>> theaterSeats = [];
+  List<String> selectedSeats = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Free Seats'),
+        title: const Text(
+          'Select Free Space',
+          style: TextStyle(
+            color: Color(0xFF755DC1),
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -30,7 +41,15 @@ class _MovieTheaterPageState extends State<MovieTheaterPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Enter number of rows and columns:'),
+              const Text(
+                'Enter number of rows and columns:',
+                style: TextStyle(
+                  color: Color(0xFF755DC1),
+                  fontSize: 18.0,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               Row(
                 children: [
                   Expanded(
@@ -40,6 +59,7 @@ class _MovieTheaterPageState extends State<MovieTheaterPage> {
                       onChanged: (value) {
                         setState(() {
                           rows = int.tryParse(value) ?? 0;
+                          initializeTheater();
                         });
                       },
                     ),
@@ -52,6 +72,7 @@ class _MovieTheaterPageState extends State<MovieTheaterPage> {
                       onChanged: (value) {
                         setState(() {
                           columns = int.tryParse(value) ?? 0;
+                          initializeTheater();
                         });
                       },
                     ),
@@ -63,66 +84,77 @@ class _MovieTheaterPageState extends State<MovieTheaterPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Select free seats:'),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: columns,
-                        crossAxisSpacing: 4.0,
-                        mainAxisSpacing: 4.0,
-                      ),
-                      itemCount: rows * columns,
-                      itemBuilder: (context, index) {
-                        final row = index ~/ columns;
-                        final column = index % columns;
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              theaterSeats[row][column].isAvailable =
-                                  !theaterSeats[row][column].isAvailable;
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              color: theaterSeats[row][column].isAvailable
-                                  ? Colors.green
-                                  : Colors.red,
+                    const Text('Select free spaces:'),
+                    SizedBox(
+                      height: 400, // Adjust the height of the ListView
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: columns,
+                        itemBuilder: (context, columnIndex) {
+                          return SizedBox(
+                            width: 40, // Adjust the width of the seat container
+                            child: ListView.builder(
+                              itemCount: rows,
+                              itemBuilder: (context, rowIndex) {
+                                final seat =
+                                    theaterSeats[rowIndex][columnIndex];
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      seat.isAvailable = !seat.isAvailable;
+                                      if (!seat.isAvailable) {
+                                        selectedSeats.add(
+                                            '${rowIndex + 1}-${columnIndex + 1}');
+                                      } else {
+                                        selectedSeats.remove(
+                                            '${rowIndex + 1}-${columnIndex + 1}');
+                                      }
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.all(4.0),
+                                    width:
+                                        40, // Adjust the width of the seat container
+                                    height:
+                                        40, // Adjust the height of the seat container
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      border: Border.all(
+                                          color: Colors.purple.shade400),
+                                      color: seat.isAvailable
+                                          ? Colors.purple.shade100
+                                          : Colors.purple.shade800,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                        '${rowIndex + 1}-${columnIndex + 1}'),
+                                  ),
+                                );
+                              },
                             ),
-                            alignment: Alignment.center,
-                            child: Text('${row + 1}-${column + 1}'),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Selected Spaces: ${selectedSeats.join(", ")}',
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ],
                 ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  List<String> selectedSeats = [];
-                  for (int i = 0; i < rows; i++) {
-                    for (int j = 0; j < columns; j++) {
-                      if (!theaterSeats[i][j].isAvailable) {
-                        selectedSeats.add('${i + 1}-${j + 1}');
-                      }
-                    }
-                  }
-                  print('Selected seats: $selectedSeats');
+                  print('Selected spaces: $selectedSeats');
                 },
-                child: const Text('Print Selected Seats'),
+                child: const Text('Print Selected Spaces'),
               ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initializeTheater();
   }
 
   void initializeTheater() {
@@ -133,11 +165,6 @@ class _MovieTheaterPageState extends State<MovieTheaterPage> {
         (column) => Seat(row, column),
       ),
     );
+    selectedSeats.clear();
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: MovieTheaterPage(),
-  ));
 }

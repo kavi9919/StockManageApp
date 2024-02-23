@@ -33,7 +33,7 @@ class SeasonScreen extends StatelessWidget {
                       buttonText: 'Winter',
                       onPressed: () {
                         // onPressed for ImageButton
-                        Navigator.of(context).pushNamed('/free_space');
+                        Navigator.of(context).pushNamed('/items');
                       }),
                   ImageButton(
                       imagePath: 'assets/spring.png',
