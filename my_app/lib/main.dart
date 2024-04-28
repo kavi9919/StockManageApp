@@ -24,7 +24,6 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/signup': (context) => SingUpScreen(),
         '/items': (context) => const SelectableItemListPage(),
-        '/free_space': (context) => const FreeSpacePage(),
       },
     );
   }

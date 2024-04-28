@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Seat {
   final int row;
@@ -9,7 +10,9 @@ class Seat {
 }
 
 class FreeSpacePage extends StatefulWidget {
-  const FreeSpacePage({super.key});
+  final List data;
+
+  const FreeSpacePage({Key? key, required this.data}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
@@ -21,6 +24,7 @@ class _FreeSpacePageState extends State<FreeSpacePage> {
   int columns = 0;
   List<List<Seat>> theaterSeats = [];
   List<String> selectedSeats = [];
+  bool showSelectedSpaces = false;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +45,15 @@ class _FreeSpacePageState extends State<FreeSpacePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Selected Item count: ${widget.data.length}',
+                style: TextStyle(
+                  color: Color(0xFF755DC1),
+                  fontSize: 18.0,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               const Text(
                 'Enter number of rows and columns:',
                 style: TextStyle(
@@ -86,7 +99,7 @@ class _FreeSpacePageState extends State<FreeSpacePage> {
                   children: [
                     const Text('Select free spaces:'),
                     SizedBox(
-                      height: 400, // Adjust the height of the ListView
+                      height: 300, // Adjust the height of the ListView
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: columns,
@@ -136,20 +149,35 @@ class _FreeSpacePageState extends State<FreeSpacePage> {
                         },
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Selected Spaces: ${selectedSeats.join(", ")}',
-                      style: const TextStyle(fontSize: 16),
+                    Container(
+                      height: 200, // Adjust the height of the ListView
+                      child: Expanded(
+                        child: ListView.builder(
+                          itemCount: widget.data.length,
+                          itemBuilder: (context, index) {
+                            final currentItem = widget.data[index];
+                            final selectedSeat = selectedSeats.length > index
+                                ? selectedSeats[index]
+                                : '';
+
+                            return ListTile(
+                              title: Text(currentItem.toString()),
+                              subtitle: Text('Row - Col: $selectedSeat'),
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  print('Selected spaces: $selectedSeats');
-                },
-                child: const Text('Print Selected Spaces'),
-              ),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     print(widget
+              //         .data); // Print the data list passed from the previous page
+              //   },
+              //   child: const Text('Print Selected Spaces'),
+              // ),
             ],
           ),
         ),
