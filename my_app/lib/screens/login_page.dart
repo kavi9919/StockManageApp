@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http; // Import the HTTP package
+import 'dart:convert'; // Import the convert package
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -8,6 +10,44 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+
+  Future<void> _login() async {
+    // Get the values from the text fields
+    final String username = _emailController.text.trim();
+    final String password = _passController.text.trim();
+
+    // Create the request body
+    final Map<String, String> requestBody = {
+      'username': username,
+      'password': password,
+    };
+
+    // Your API endpoint for login
+    const String url = 'https://shenuka-fyp-f6da223878dd.herokuapp.com/login';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(requestBody),
+      );
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        // Navigate to the home screen upon successful login
+        Navigator.of(context).pushNamed('/home');
+      } else {
+        // Handle error
+        print('Login failed: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      // Handle error
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,10 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: screenSize.height * 0.08,
                       //sign in button
                       child: ElevatedButton(
-                        onPressed: () {
-                          //sign in logic
-                          Navigator.of(context).pushNamed('/home');
-                        },
+                        onPressed: _login, // Call the _login function
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF9F7BFF),
                         ),
