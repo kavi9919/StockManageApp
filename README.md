@@ -17,6 +17,6 @@ Inventory Management App is a robust solution designed for salespeople to effici
 ## Technology Stack
 
 - **Frontend**: Flutter
-- **Backend**: Firebase (or any other backend you are using)
-- **Database**: Firestore (or any other database you are using)
+- **Backend**: FastAPI
+
 
